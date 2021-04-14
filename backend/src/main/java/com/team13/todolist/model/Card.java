@@ -44,8 +44,8 @@ public class Card {
                 '}';
     }
 
-    public void update(Card updateCardInfo) {
-        this.title = updateCardInfo.title;
-        this.body = updateCardInfo.body;
+    public void update(UpdateCardParameter updateCardInfo) {
+        this.title = updateCardInfo.getTitle();
+        this.body = updateCardInfo.getBody();
     }
 }

@@ -3,6 +3,7 @@ package com.team13.todolist.model;
 import org.springframework.data.annotation.Id;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class Column {
     @Id
@@ -21,10 +22,6 @@ public class Column {
         return new Column(null, name, cards);
     }
 
-    private CardRef createCardRef(Card card) {
-        return CardRef.of(card.getId());
-    }
-
     public Long getId() {
         return id;
     }
@@ -38,21 +35,25 @@ public class Column {
     }
 
     public void addCard(Card card) {
-        addCard(0L, card);
+        addCard(0L, card.getId());
     }
 
-    public void addCard(Long prevCardId, Card card) {
+    public void addCard(Long prevCardId, Long cardId) {
         if (!(cards.containsKey(prevCardId) || prevCardId.equals(0L))) {
-            checkCardListContains(prevCardId);
+            containsCardOrThrowException(prevCardId);
         }
-        CardRef nextCard = cards.put(prevCardId, createCardRef(card));
+        CardRef nextCard = cards.put(prevCardId, new CardRef(cardId));
         if (nextCard != null) {
-            cards.putIfAbsent(card.getId(), nextCard);
+            cards.putIfAbsent(cardId, nextCard);
         }
     }
 
     public void removeCard(Long cardId) {
         Long prevCardId = findPrevCardId(cardId);
+        removeCardByPreviousCardId(prevCardId, cardId);
+    }
+
+    public void removeCardByPreviousCardId(Long prevCardId, Long cardId) {
         cards.remove(prevCardId);
         CardRef nextCard = cards.remove(cardId);
         if (nextCard != null) {
@@ -60,7 +61,7 @@ public class Column {
         }
     }
 
-    private Long findPrevCardId(Long cardId) {
+    public Long findPrevCardId(Long cardId) {
         CardRef cardRef = CardRef.of(cardId);
         for (Map.Entry<Long, CardRef> entry : cards.entrySet()) {
             if (entry.getValue().equals(cardRef)) {
@@ -70,17 +71,29 @@ public class Column {
         throw new RuntimeException("Not Found");
     }
 
-    private void checkCardListContains(Long cardId) {
+    public void containsCardOrThrowException(Long cardId) {
         if (!cards.containsValue(CardRef.of(cardId))) {
             // TODO: Throw prefer exception
             throw new RuntimeException("Not Found");
         }
     }
 
-    public void checkCardByPreviousId(Long previousCardId, Long cardId) {
-        CardRef cardRef = cards.get(previousCardId);
-        if (cardRef == null || !cardId.equals(cardRef.getCardId())) {
-            throw new RuntimeException("Not Found");
-        }
+    public boolean isEditRequest(Long columnId, Long cardId, UpdateCardParameter updateCardInfo) {
+        CardRef checkingCard = cards.get(updateCardInfo.getPreviousCardId());
+        return updateCardInfo.equalsColumnId(columnId) && updateCardInfo.equalsCardId(cardId)
+                && (checkingCard != null && checkingCard.equalsCardId(cardId));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Column column = (Column) o;
+        return Objects.equals(id, column.id) && Objects.equals(name, column.name) && Objects.equals(cards, column.cards);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, cards);
     }
 }

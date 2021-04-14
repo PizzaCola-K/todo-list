@@ -43,4 +43,12 @@ public class UpdateCardParameter {
     public String getBody() {
         return body;
     }
+
+    public boolean equalsColumnId(Long columnId) {
+        return this.columnId.equals(columnId);
+    }
+
+    public boolean equalsCardId(Long cardId) {
+        return this.columnId.equals(cardId);
+    }
 }

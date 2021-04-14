@@ -72,12 +72,40 @@ public class ColumnService {
         columnRepository.save(column);
     }
 
+    @Transactional
     public CardInfo updateCard(Long columnId, Long cardId, UpdateCardParameter updateCardInfo) {
         Column column = columnRepository.findById(columnId).orElseThrow(() -> new RuntimeException("Not Found"));
-        column.checkCardByPreviousId(updateCardInfo.getPreviousCardId(), cardId);
-        Card oldCard = cardRepository.findById(cardId).orElseThrow(() -> new RuntimeException("Not Found"));
-        oldCard.update(Card.of(updateCardInfo.getTitle(), updateCardInfo.getBody()));
-        cardRepository.save(oldCard);
-        return new CardInfo(columnId, cardId, updateCardInfo.getPreviousCardId(), updateCardInfo.getTitle(), updateCardInfo.getBody());
+        Long newPreviousCardId = updateCardInfo.getPreviousCardId();
+        // edit card
+        if (column.isEditRequest(columnId, cardId, updateCardInfo)) {
+            Card oldCard = cardRepository.findById(cardId).orElseThrow(() -> new RuntimeException("Not Found"));
+            oldCard.update(updateCardInfo);
+            cardRepository.save(oldCard);
+            return new CardInfo(
+                    columnId,
+                    cardId,
+                    newPreviousCardId,
+                    updateCardInfo.getTitle(),
+                    updateCardInfo.getBody());
+        }
+        //move card
+        column.containsCardOrThrowException(cardId);
+        Column targetColumn = column;
+        if (!updateCardInfo.equalsColumnId(columnId)) {
+            targetColumn = columnRepository.findById(updateCardInfo.getColumnId())
+                    .orElseThrow(() -> new RuntimeException("Not Found"));
+        }
+        column.removeCard(cardId);
+        targetColumn.addCard(updateCardInfo.getPreviousCardId(), cardId);
+        if (!column.equals(targetColumn)) {
+            columnRepository.save(column);
+        }
+        columnRepository.save(targetColumn);
+        return new CardInfo(
+                columnId,
+                cardId,
+                newPreviousCardId,
+                updateCardInfo.getTitle(),
+                updateCardInfo.getBody());
     }
 }

@@ -45,7 +45,7 @@ class ColumnTest {
         Long prevCardId = 3L;
         Card newCard = Card.of("Spring 공부하기", "토비의 스프링 공부하기").withId(4L);
         reversedCardList.add(1, newCard);
-        column.addCard(prevCardId, newCard);
+        column.addCard(prevCardId, newCard.getId());
         assertColumnCardList(4);
     }
 
@@ -55,7 +55,7 @@ class ColumnTest {
         Long prevCardId = 1L;
         Card newCard = Card.of("Database 공부하기", "호눅스 DB 강의").withId(6L);
         reversedCardList.add(newCard);
-        column.addCard(prevCardId, newCard);
+        column.addCard(prevCardId, newCard.getId());
         assertColumnCardList(4);
     }
 
@@ -64,7 +64,7 @@ class ColumnTest {
     public void addCardLastPosition() {
         Card newCard = Card.of("알고리즘 공부하기", "프로그래머스 문제 풀기").withId(5L);
         reversedCardList.add(0, newCard);
-        column.addCard(0L, newCard);
+        column.addCard(0L, newCard.getId());
         assertColumnCardList(4);
     }
 
@@ -73,7 +73,7 @@ class ColumnTest {
     public void addCardThrowsException() {
         Card newCard = Card.of("알고리즘 공부하기", "프로그래머스 문제 풀기").withId(5L);
         softly.assertThatThrownBy(() -> {
-            column.addCard(7L, newCard);
+            column.addCard(7L, newCard.getId());
         }).isInstanceOf(RuntimeException.class);
     }
 

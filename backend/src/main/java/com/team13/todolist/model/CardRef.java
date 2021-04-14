@@ -21,6 +21,10 @@ public class CardRef {
         return card;
     }
 
+    public boolean equalsCardId(Long cardId) {
+        return card.equals(cardId);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
