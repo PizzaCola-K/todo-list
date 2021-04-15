@@ -225,7 +225,7 @@ Response Body
             "from":null,
             "to":null,
             "actionTime":"2021-04-07T14:10:25.038"
-        },}
+        },{
             "user":"Web",
             "action":"Edited",
             "title":"GitHub 공부",
