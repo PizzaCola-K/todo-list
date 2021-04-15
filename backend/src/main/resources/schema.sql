@@ -29,5 +29,4 @@ CREATE TABLE IF NOT EXISTS activity (
     `from` VARCHAR(50),
     `to` VARCHAR(50),
     action_time TIMESTAMP
-
 );

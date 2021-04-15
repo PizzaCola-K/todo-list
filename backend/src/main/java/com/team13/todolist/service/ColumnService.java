@@ -1,6 +1,7 @@
 package com.team13.todolist.service;
 
 import com.team13.todolist.model.*;
+import com.team13.todolist.repository.ActivityRepository;
 import com.team13.todolist.repository.CardRepository;
 import com.team13.todolist.repository.ColumnRepository;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,12 @@ public class ColumnService {
 
     private final ColumnRepository columnRepository;
     private final CardRepository cardRepository;
+    private final ActivityRepository activityRepository;
 
-    public ColumnService(ColumnRepository columnRepository, CardRepository cardRepository) {
+    public ColumnService(ColumnRepository columnRepository, CardRepository cardRepository, ActivityRepository activityRepository) {
         this.columnRepository = columnRepository;
         this.cardRepository = cardRepository;
+        this.activityRepository = activityRepository;
     }
 
     public Column addColumn(String name) {
@@ -33,6 +36,10 @@ public class ColumnService {
         Card newCard = cardRepository.save(card);
         column.addCard(newCard);
         column = columnRepository.save(column);
+
+        Activity activity = Activity.of(1L, "Added", card.getTitle(), null, column.getName());
+        activityRepository.save(activity);
+
         return new CardInfo(column.getId(), newCard.getId(), 0L, newCard.getTitle(), newCard.getBody());
     }
 
@@ -66,10 +73,15 @@ public class ColumnService {
         return ColumnInfoList;
     }
 
+    @Transactional
     public void removeCard(Long columnId, Long cardId) {
         Column column = columnRepository.findById(columnId).orElseThrow(() -> new RuntimeException("Not Found"));
+        Card card = cardRepository.findById(cardId).orElseThrow(() -> new RuntimeException("Not Found"));
         column.removeCard(cardId);
         columnRepository.save(column);
+
+        Activity activity = Activity.of(1L, "Deleted", card.getTitle(), null, null);
+        activityRepository.save(activity);
     }
 
     @Transactional
@@ -81,6 +93,10 @@ public class ColumnService {
         if (column.isEditRequest(columnId, cardId, updateCardInfo)) {
             oldCard.update(updateCardInfo);
             Card updatedCard = cardRepository.save(oldCard);
+
+            Activity activity = Activity.of(1L, "Edited", updateCardInfo.getTitle(), null, null);
+            activityRepository.save(activity);
+
             return new CardInfo(
                     columnId,
                     cardId,
@@ -101,6 +117,11 @@ public class ColumnService {
             columnRepository.save(column);
         }
         columnRepository.save(targetColumn);
+
+        Activity activity = Activity.of(1L, "Moved", oldCard.getTitle(),
+                column.getName(), targetColumn.getName());
+        activityRepository.save(activity);
+
         return new CardInfo(
                 targetColumn.getId(),
                 cardId,
