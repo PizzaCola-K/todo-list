@@ -219,36 +219,32 @@ Response Body
 {
     "activities" : [
         {
-            "id":4,
-            "actionUserId":1,
-            "action":"삭제",
+            "user":"Web",
+            "action":"Deleted",
             "title":"GitHub 공부",
-            "fromColumn":null,
-            "toColumn":null,
+            "from":null,
+            "to":null,
             "actionTime":"2021-04-07T14:10:25.038"
-        },{
-            "id":3,
-            "actionUserId":1,
-            "action":"변경",
+        },}
+            "user":"Web",
+            "action":"Edited",
             "title":"GitHub 공부",
-            "fromColumn":null,
-            "toColumn":null,
+            "from":null,
+            "to":null,
             "actionTime":"2021-04-07T14:10:25.038"
         },{
-            "id":2,
-            "actionUserId":1,
-            "action":"이동",
+            "user":"Web",
+            "action":"Moved",
             "title":"git 공부",
-            "fromColumn":"해야할 일",
-            "toColumn":"하고있는 일",
+            "from":"해야할 일",
+            "to":"하고있는 일",
             "actionTime":"2021-04-07T14:10:25.038"
         },{
-            "id":1,
-            "actionUserId":1,
-            "action":"등록",
+            "user":"Web",
+            "action":"Added",
             "title":"git 공부",
-            "fromColumn":null,
-            "toColumn":"해야할 일",
+            "from":null,
+            "to":"해야할 일",
             "actionTime":"2021-04-07T14:10:25.038"
         }
     ]
