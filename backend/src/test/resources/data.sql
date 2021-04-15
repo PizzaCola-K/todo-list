@@ -9,3 +9,5 @@ INSERT INTO card (id, title, body) VALUES (3, 'HTML/CSS 공부하기', 'input �
 INSERT INTO column_card (`column`, card, column_key) VALUES (1, 2, 0);
 INSERT INTO column_card (`column`, card, column_key) VALUES (1, 1, 2);
 INSERT INTO column_card (`column`, card, column_key) VALUES (2, 3, 0);
+
+INSERT INTO `user` (id, `name`, password) VALUES (1, 'Web', '123');
