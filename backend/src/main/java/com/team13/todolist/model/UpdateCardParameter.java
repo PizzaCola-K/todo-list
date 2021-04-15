@@ -49,6 +49,6 @@ public class UpdateCardParameter {
     }
 
     public boolean equalsCardId(Long cardId) {
-        return this.columnId.equals(cardId);
+        return this.cardId.equals(cardId);
     }
 }
