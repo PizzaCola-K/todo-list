@@ -211,7 +211,7 @@ Response Body
 
 ```
 
-`GET /api/activities` (Not Working)
+`GET /api/activities`
 
 활동 내역을 보냅니다.
 
