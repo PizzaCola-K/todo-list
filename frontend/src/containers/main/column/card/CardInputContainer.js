@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import CardInput from "../../../../components/main/column/card/CardInput";
+import { TodoContext } from "../../../../lib/utility/TodoStore";
 
 const CardInputContainer = ({ title, body, index, setColumnData, columnId, cardId, previousCardId }) => {
+    const { setIsDataUpdate } = useContext(TodoContext);
     const [inputTitle, setTitle] = useState(title);
     const [inputBody, setBody] = useState(body);
     const isAble = inputTitle.length * inputBody.length;
@@ -20,6 +22,7 @@ const CardInputContainer = ({ title, body, index, setColumnData, columnId, cardI
             newData[columnId-1].cards = left.concat(json.data.card, right);
             return newData
         });
+        setIsDataUpdate(true);
     };
 
     const deleteCard = () => {

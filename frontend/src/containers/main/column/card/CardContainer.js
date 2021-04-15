@@ -1,9 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import axios from "axios";
 import Card from "../../../../components/main/column/card/Card";
 import PopupModal from "../../../../components/common/PopupModal";
+import { TodoContext } from "../../../../lib/utility/TodoStore";
 
 const CardContainer = ({ title, body, index, columnId, cardId, previousCardId, isZanSang, setColumnData}) => {
+    const { setIsDataUpdate } = useContext(TodoContext);
+
     const [x, setX] = useState();
     const [y, setY] = useState();
     const [left, setLeft] = useState(0);
@@ -74,9 +77,9 @@ const CardContainer = ({ title, body, index, columnId, cardId, previousCardId, i
 
             if (zanSangCardIndex<zanSangColumn.cards.length-1) newData[zanSang.columnId-1].cards[zanSangCardIndex+1].previousCardId = zanSang.cardId
 
-
             axios.put(`api/columns/${columnId}/cards/${cardId}`, {card: zanSang})
-            
+            setIsDataUpdate(true);
+
             return newData.map((v)=>{
                 return {columnId:v.columnId, name:v.name, cards:v.cards.map((card)=>{
                     const newCard = {...card}
@@ -128,6 +131,7 @@ const CardContainer = ({ title, body, index, columnId, cardId, previousCardId, i
             return newData;
         });
         axios.delete(`api/columns/${columnId}/cards/${cardId}`);
+        setIsDataUpdate(true);
     };
     const onClickPopupCancel = () => setIsPopubVisible(false);
 
