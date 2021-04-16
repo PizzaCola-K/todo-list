@@ -159,6 +159,42 @@
 
 ```
 
+`POST /api/columns`
+
+칼럼을 추가합니다. 응답으로 카드가 빈 리스트인 column을 보냅니다.
+
+```json
+{
+    "column" : {
+        "name" : "새 칼럼"
+    }
+}
+```
+
+`PUT /api/columns/:columnId`
+
+칼럼의 이름을 수정합니다. 응답으로 카드 리스트가 포함된 column을 보냅니다.
+
+```json
+{
+    "column" : {
+        "name" : "새 칼럼"
+    }
+}
+```
+
+`DELETE /api/columns/:columnId`
+
+칼럼을 삭제합니다. 존재하는 카드도 삭제됩니다. 204 응답을 보냅니다.
+
+```json
+{
+    "column" : {
+        "name" : "새 칼럼"
+    }
+}
+```
+
 `POST /api/columns/:columnId/cards`
 
 해당 칼럼에 카드를 추가합니다.
