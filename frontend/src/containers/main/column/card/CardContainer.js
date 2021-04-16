@@ -28,11 +28,13 @@ const CardContainer = ({ title, body, index, columnId, cardId, previousCardId, i
         let targetColumn = moveX + columnId
         let targetIndex = moveY + index
         targetIndex = targetIndex > 0 ? targetIndex : 0
-        targetColumn = targetColumn > 1 ? targetColumn : 1
-        const card = {title, body, columnId:targetColumn, previousCardId, cardId, isZanSang:true}
+        targetColumn = targetColumn > 1 ? targetColumn : 1   // index = id-1
         setColumnData((data)=>{
             const newData = [...data.map(v=>({columnId:v.columnId, name:v.name, cards:v.cards.filter(({isZanSang})=>!isZanSang)}))]
             
+            const newColumnId = newData[targetColumn-1].columnId
+            const card = {title, body, columnId:newColumnId, previousCardId, cardId, isZanSang:true}
+
             const columnIndex = Math.min(targetColumn, newData.length)-1
             const rowIndex = Math.min(targetIndex,newData[targetColumn-1].cards.length)
 
@@ -66,6 +68,7 @@ const CardContainer = ({ title, body, index, columnId, cardId, previousCardId, i
 
 
             const zanSangColumn = newData.find(({cards})=>cards.find(({isZanSang})=>isZanSang))
+            const zanSangColumnIndex = newData.findIndex(({cards})=>cards.find(({isZanSang})=>isZanSang))
             const zanSang = zanSangColumn.cards.find(({isZanSang})=>isZanSang)
             const zanSangCardIndex = zanSangColumn.cards.map(({isZanSang}, i)=>isZanSang ? i : null).filter(e=>e!==null)[0]
             
@@ -76,7 +79,7 @@ const CardContainer = ({ title, body, index, columnId, cardId, previousCardId, i
             const upsideCard = (zanSangCardIndex===0) ? {cardId:0} : zanSangColumn.cards[zanSangCardIndex-1]
             zanSang.previousCardId = upsideCard.cardId
 
-            if (zanSangCardIndex<zanSangColumn.cards.length-1) newData[zanSang.columnIndex].cards[zanSangCardIndex+1].previousCardId = zanSang.cardId
+            if (zanSangCardIndex<zanSangColumn.cards.length-1) newData[zanSangColumnIndex].cards[zanSangCardIndex+1].previousCardId = zanSang.cardId
 
             axios.put(`api/columns/${columnId}/cards/${cardId}`, {card: zanSang})
             setIsDataUpdate(true);
