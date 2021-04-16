@@ -19,7 +19,17 @@ const MainContainer = () => {
         );
     }, [columnData]);
 
-    return <Main>{columns}</Main>;
+
+    // 컬럼 추가 버튼 이벤트 (클릭)
+    const clickHandler = () => {
+        setColumnData((data)=>{
+            const newData = [...data]
+            newData.push({columnId: newData.length + 1, name:"적절한 기본이름", cards:[]})
+            return newData
+        })
+    };
+
+    return <Main clickHandler={clickHandler}>{columns}</Main>;
 };
 
 export default MainContainer;

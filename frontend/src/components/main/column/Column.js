@@ -47,15 +47,23 @@ const ColumnHeaderButtons = styled.div`
     margin-left: auto;
 `;
 
-const Column = ({ title, cardList, plusEvent }) => {
+const Column = ({ title, cardList, isEditNow, onEvents }) => {
+    const { plusEvent, deleteEvent, dbEvent, editInputEnterEvent, changeTitle } = onEvents;
+
     return (
         <ColumnWrapper>
             <ColumnHeader>
-                <ColumnHeaderTitle>{title}</ColumnHeaderTitle>
+            {isEditNow 
+                ? (<input type="text" onKeyDown={editInputEnterEvent} value={title} onChange={changeTitle} />) 
+                : (
+                    <ColumnHeaderTitle onDoubleClick={dbEvent}>
+                        {title}
+                    </ColumnHeaderTitle>
+                )}
                 <ColumnHeaderCount>{cardList?.length}</ColumnHeaderCount>
                 <ColumnHeaderButtons>
                     <ColumnPlusButton onClick={plusEvent} />
-                    <ColumnDeleteButton />
+                    <ColumnDeleteButton onClick={deleteEvent} />
                 </ColumnHeaderButtons>
             </ColumnHeader>
             <ul>{cardList}</ul>
