@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import ColumnContainer from './column/ColumnContainer';
 import Main from '../../components/main/Main';
-
+import { TodoContext } from "../../lib/utility/TodoStore";
 
 //prettier-ignore
 const MainContainer = () => {
+    const { setIsDataUpdate } = useContext(TodoContext);
+
     const [columnData, setColumnData] = useState([]);
     const [columns, setColumns] = useState();
 
@@ -27,7 +29,8 @@ const MainContainer = () => {
             const newData = [...data]
             newData.push(json.data.column)
             return newData
-        })
+        });
+        setIsDataUpdate(true);
     };
 
     return <Main clickHandler={clickHandler}>{columns}</Main>;

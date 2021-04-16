@@ -47,14 +47,22 @@ const ColumnHeaderButtons = styled.div`
     margin-left: auto;
 `;
 
+const ColumnEditInput = styled.input`
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #86c6ff;
+    color: #888;
+    padding: 6px 0;
+`;
+
 const Column = ({ title, cardList, isEditNow, onEvents }) => {
     const { plusEvent, deleteEvent, dbEvent, editInputEnterEvent, changeTitle } = onEvents;
 
     return (
         <ColumnWrapper>
             <ColumnHeader>
-            {isEditNow 
-                ? (<input type="text" onKeyDown={editInputEnterEvent} value={title} onChange={changeTitle} />) 
+            {isEditNow
+                ? (<ColumnEditInput type="text" onKeyDown={editInputEnterEvent} value={title} onChange={changeTitle} />) 
                 : (
                     <ColumnHeaderTitle onDoubleClick={dbEvent}>
                         {title}
