@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Column from '../../../components/main/column/Column';
 import CardContainer from "./card/CardContainer";
 import CardInputContainer from "./card/CardInputContainer";
@@ -22,16 +23,17 @@ const ColumnContainer = ({ columnId, title, list, setColumnData }) => {
             : <li key={index}><CardContainer {...v} /></li>
     };
 
-    // const plusEvent = () => setCardList(() => [{ isInput: true, title: '', body: '', columnId:columnId }, ...cardList,]);
     const plusEvent = () => {
         setColumnData((data)=>{
             const newData = [...data]
-            newData[columnId-1].cards = [{ isInput: true, title: '', body: '', columnId:columnId },...newData[columnId-1].cards]
+            const columnIndex = newData.findIndex((v)=>v.columnId===columnId)
+            newData[columnIndex].cards = [{ isInput: true, title: '', body: '', columnId:columnId },...newData[columnIndex].cards]
             return newData
         })
     };
 
     const deleteEvent = () => {
+        axios.delete(`api/columns/${columnId}`);
         setColumnData((data)=>[...data].filter((card)=>card.columnId!==columnId));
     };
 
@@ -42,6 +44,7 @@ const ColumnContainer = ({ columnId, title, list, setColumnData }) => {
     const editInputEnterEvent = ({target, keyCode}) => {
         if (keyCode !== 13) return;
         const newName =  target.value;
+        axios.put(`api/columns/${columnId}`, {column: { name: newName}})
         setColumnData((data)=>data.map((column)=> column.columnId !== columnId ? column : {columnId, name:newName, cards:list}))
         setIsEditNow(false);
     };

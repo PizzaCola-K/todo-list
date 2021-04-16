@@ -21,10 +21,11 @@ const MainContainer = () => {
 
 
     // 컬럼 추가 버튼 이벤트 (클릭)
-    const clickHandler = () => {
+    const clickHandler = async () => {
+        const json = await axios.post(`api/columns`, {column:{name:"New Column"}} )
         setColumnData((data)=>{
             const newData = [...data]
-            newData.push({columnId: newData.length + 1, name:"적절한 기본이름", cards:[]})
+            newData.push(json.data.column)
             return newData
         })
     };

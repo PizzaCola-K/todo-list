@@ -17,9 +17,10 @@ const CardInputContainer = ({ title, body, index, setColumnData, columnId, cardI
 
         setColumnData((data)=>{
             const newData = [...data]
-            const left = newData[columnId-1].cards.slice(0, index);
-            const right = newData[columnId-1].cards.slice(index + 1);
-            newData[columnId-1].cards = left.concat(json.data.card, right);
+            const columnIndex = newData.findIndex((v)=>v.columnId===columnId)
+            const left = newData[columnIndex].cards.slice(0, index);
+            const right = newData[columnIndex].cards.slice(index + 1);
+            newData[columnIndex].cards = left.concat(json.data.card, right);
             return newData
         });
         setIsDataUpdate(true);
@@ -29,14 +30,16 @@ const CardInputContainer = ({ title, body, index, setColumnData, columnId, cardI
         title.length * body.length
             ? setColumnData((data)=>{
                 const newData = [...data]
-                const left = newData[columnId-1].cards.slice(0, index);
-                const right = newData[columnId-1].cards.slice(index + 1);
-                newData[columnId-1].cards = left.concat({ title, body, previousCardId, cardId, columnId }, right);
+                const columnIndex = newData.findIndex((v)=>v.columnId===columnId)
+                const left = newData[columnIndex].cards.slice(0, index);
+                const right = newData[columnIndex].cards.slice(index + 1);
+                newData[columnIndex].cards = left.concat({ title, body, previousCardId, cardId, columnId }, right);
                 return newData
             })
             : setColumnData((data)=>{
                 const newData = [...data]
-                newData[columnId-1].cards = newData[columnId-1].cards.filter((_, i) => i !== index)
+                const columnIndex = newData.findIndex((v)=>v.columnId===columnId)
+                newData[columnIndex].cards = newData[columnIndex].cards.filter((_, i) => i !== index)
                 return newData
             })
     };

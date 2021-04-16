@@ -61,21 +61,22 @@ const CardContainer = ({ title, body, index, columnId, cardId, previousCardId, i
         setTop(0);
         setColumnData( (data)=>{
             const newData = [...data]
-            newData[columnId-1].cards = newData[columnId-1].cards.filter((_, i) => i !== index)
+            const columnIndex = newData.findIndex((v)=>v.columnId===columnId)
+            newData[columnIndex].cards = newData[columnIndex].cards.filter((_, i) => i !== index)
 
 
             const zanSangColumn = newData.find(({cards})=>cards.find(({isZanSang})=>isZanSang))
             const zanSang = zanSangColumn.cards.find(({isZanSang})=>isZanSang)
             const zanSangCardIndex = zanSangColumn.cards.map(({isZanSang}, i)=>isZanSang ? i : null).filter(e=>e!==null)[0]
             
-            if (newData[columnId-1].cards[index] !== undefined)
-            newData[columnId-1].cards[index].previousCardId = zanSang.previousCardId
+            if (newData[columnIndex].cards[index] !== undefined)
+            newData[columnIndex].cards[index].previousCardId = zanSang.previousCardId
 
             zanSang.columnId = zanSangColumn.columnId
             const upsideCard = (zanSangCardIndex===0) ? {cardId:0} : zanSangColumn.cards[zanSangCardIndex-1]
             zanSang.previousCardId = upsideCard.cardId
 
-            if (zanSangCardIndex<zanSangColumn.cards.length-1) newData[zanSang.columnId-1].cards[zanSangCardIndex+1].previousCardId = zanSang.cardId
+            if (zanSangCardIndex<zanSangColumn.cards.length-1) newData[zanSang.columnIndex].cards[zanSangCardIndex+1].previousCardId = zanSang.cardId
 
             axios.put(`api/columns/${columnId}/cards/${cardId}`, {card: zanSang})
             setIsDataUpdate(true);
@@ -100,9 +101,10 @@ const CardContainer = ({ title, body, index, columnId, cardId, previousCardId, i
     const onDoubleClickEditCardHandler = () => {
         setColumnData((data)=>{
             const newData = [...data];
-            const left = newData[columnId-1].cards.slice(0, index);
-            const right = newData[columnId-1].cards.slice(index + 1);
-            newData[columnId-1].cards = left.concat({ title, body, isInput: true, previousCardId, cardId, columnId }, right);
+            const columnIndex = newData.findIndex((v)=>v.columnId===columnId)
+            const left = newData[columnIndex].cards.slice(0, index);
+            const right = newData[columnIndex].cards.slice(index + 1);
+            newData[columnIndex].cards = left.concat({ title, body, isInput: true, previousCardId, cardId, columnId }, right);
             return newData;
         })
     };
@@ -127,7 +129,8 @@ const CardContainer = ({ title, body, index, columnId, cardId, previousCardId, i
     const onClickPopupConfirm = () => {
         setColumnData((data)=>{
             const newData = [...data]
-            newData[columnId-1].cards = newData[columnId-1].cards.filter((_, i) => i !== index)
+            const columnIndex = newData.findIndex((v)=>v.columnId===columnId)
+            newData[columnIndex].cards = newData[columnIndex].cards.filter((_, i) => i !== index)
             return newData;
         });
         axios.delete(`api/columns/${columnId}/cards/${cardId}`);
