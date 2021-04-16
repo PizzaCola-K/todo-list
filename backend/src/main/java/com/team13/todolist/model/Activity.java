@@ -30,6 +30,18 @@ public class Activity {
         this.actionTime = actionTime;
     }
 
+    public static Activity addColumnActivity(Long userId, Column column) {
+        return new Activity(null, userId, "Added", column.getName(), null, null, LocalDateTime.now());
+    }
+
+    public static Activity editColumnActivity(Long userId, Column column) {
+        return new Activity(null, userId, "Edited", column.getName(), null, null, LocalDateTime.now());
+    }
+
+    public static Activity deleteColumnActivity(Long userId, Column column) {
+        return new Activity(null, userId, "Deleted", column.getName(), null, null, LocalDateTime.now());
+    }
+
     public static Activity of(Long userId, String action, String title, String from, String to) {
         return new Activity(null, userId, action, title, from, to, LocalDateTime.now());
     }

@@ -25,9 +25,33 @@ public class ColumnService {
         this.activityRepository = activityRepository;
     }
 
-    public Column addColumn(String name) {
-        Column column = Column.of(name, new HashMap<>());
-        return columnRepository.save(column);
+    @Transactional
+    public ColumnInfo addColumn(ColumnParameter newColumn) {
+        Column column = Column.of(newColumn.getName(), new HashMap<>());
+        Column addedColumn = columnRepository.save(column);
+
+        activityRepository.save(Activity.addColumnActivity(1L, addedColumn));
+
+        return ColumnInfo.of(addedColumn, makeCardList(addedColumn));
+    }
+
+    @Transactional
+    public ColumnInfo updateColumn(Long columnId, ColumnParameter newColumnInfo) {
+        Column oldColumn = columnRepository.findById(columnId).orElseThrow(() -> new RuntimeException("Not Found"));
+        Column updatedColumn = oldColumn.update(newColumnInfo);
+        updatedColumn = columnRepository.save(updatedColumn);
+
+        activityRepository.save(Activity.editColumnActivity(1L, updatedColumn));
+
+        return ColumnInfo.of(updatedColumn, makeCardList(updatedColumn));
+    }
+
+    @Transactional
+    public void removeColumn(Long columnId) {
+        Column column = columnRepository.findById(columnId).orElseThrow(() -> new RuntimeException("Not Found"));
+        columnRepository.deleteById(columnId);
+
+        activityRepository.save(Activity.deleteColumnActivity(1L, column));
     }
 
     @Transactional
@@ -43,14 +67,17 @@ public class ColumnService {
         return new CardInfo(column.getId(), newCard.getId(), 0L, newCard.getTitle(), newCard.getBody());
     }
 
+    @Transactional(readOnly = true)
     public ColumnInfo getColumn(Long columnId) {
         Column column = columnRepository.findById(columnId).orElseThrow(() -> new RuntimeException("Not Found"));
-        Map<Long, CardRef> cardMap = column.getCards();
-        List<CardInfo> cards = makeCardList(columnId, cardMap);
+
+        List<CardInfo> cards = makeCardList(column);
         return new ColumnInfo(columnId, column.getName(), cards);
     }
 
-    private List<CardInfo> makeCardList(Long columnId, Map<Long, CardRef> cardMap) {
+    private List<CardInfo> makeCardList(Column column) {
+        Long columnId = column.getId();
+        Map<Long, CardRef> cardMap = column.getCards();
         List<CardInfo> cards = new ArrayList<>();
         Long previousCardId = 0L;
         CardRef cardRef;
@@ -64,10 +91,10 @@ public class ColumnService {
         return cards;
     }
 
+    @Transactional(readOnly = true)
     public List<ColumnInfo> getColumns() {
-        List<Column> columns = columnRepository.findAll();
         List<ColumnInfo> ColumnInfoList = new ArrayList<>();
-        for (Column column : columns) {
+        for (Column column : columnRepository.findAll()) {
             ColumnInfoList.add(getColumn(column.getId()));
         }
         return ColumnInfoList;

@@ -35,15 +35,6 @@ public class Card {
         return body;
     }
 
-    @Override
-    public String toString() {
-        return "Card{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", body='" + body + '\'' +
-                '}';
-    }
-
     public void update(UpdateCardParameter updateCardInfo) {
         this.title = updateCardInfo.getTitle();
         this.body = updateCardInfo.getBody();

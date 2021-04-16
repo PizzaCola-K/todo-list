@@ -1,9 +1,6 @@
 package com.team13.todolist.service;
 
-import com.team13.todolist.model.Card;
-import com.team13.todolist.model.CardInfo;
-import com.team13.todolist.model.Column;
-import com.team13.todolist.model.ColumnInfo;
+import com.team13.todolist.model.*;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,14 +19,14 @@ class ColumnServiceTest {
     @Autowired
     private ColumnService columnService;
 
-    private Column column;
+    private ColumnInfo column;
 
     private SoftAssertions softly;
 
     @BeforeEach
     void setUp() {
         softly = new SoftAssertions();
-        column = columnService.addColumn("할 일");
+        column = columnService.addColumn(new ColumnParameter("할 일"));
     }
 
     @AfterEach
@@ -47,9 +44,9 @@ class ColumnServiceTest {
     @Test
     @DisplayName("새로운 카드를 원하는 칼럼에 추가한다.")
     public void addNewCard() {
-        CardInfo cardInfo = columnService.addCard(column.getId(), Card.of("Spring 공부", "토비의 스프링"));
+        CardInfo cardInfo = columnService.addCard(column.getColumnId(), Card.of("Spring 공부", "토비의 스프링"));
         softly.assertThat(cardInfo)
-                .hasFieldOrPropertyWithValue("columnId", column.getId())
+                .hasFieldOrPropertyWithValue("columnId", column.getColumnId())
                 .hasFieldOrProperty("cardId")
                 .hasFieldOrPropertyWithValue("previousCardId", 0L)
                 .hasFieldOrPropertyWithValue("title", "Spring 공부")
@@ -59,8 +56,8 @@ class ColumnServiceTest {
     @Test
     @DisplayName("빈 칼럼 하나를 가져온다.")
     void getEmptyColumn() {
-        ColumnInfo columnInfo = columnService.getColumn(column.getId());
-        softly.assertThat(columnInfo.getColumnId()).isEqualTo(column.getId());
+        ColumnInfo columnInfo = columnService.getColumn(column.getColumnId());
+        softly.assertThat(columnInfo.getColumnId()).isEqualTo(column.getColumnId());
         softly.assertThat(columnInfo.getName()).isEqualTo("할 일");
         softly.assertThat(columnInfo.getCards()).hasSize(0);
     }
@@ -68,12 +65,12 @@ class ColumnServiceTest {
     @Test
     @DisplayName("칼럼 하나를 가져온다.")
     void getColumnWithCard() {
-        columnService.addCard(column.getId(), Card.of("Spring 공부", "토비의 스프링"));
-        columnService.addCard(column.getId(), Card.of("DB 공부", "데이터베이스 첫걸음"));
-        columnService.addCard(column.getId(), Card.of("AWS 공부", "호눅스 강의"));
+        columnService.addCard(column.getColumnId(), Card.of("Spring 공부", "토비의 스프링"));
+        columnService.addCard(column.getColumnId(), Card.of("DB 공부", "데이터베이스 첫걸음"));
+        columnService.addCard(column.getColumnId(), Card.of("AWS 공부", "호눅스 강의"));
 
-        ColumnInfo columnInfo = columnService.getColumn(column.getId());
-        softly.assertThat(columnInfo.getColumnId()).isEqualTo(column.getId());
+        ColumnInfo columnInfo = columnService.getColumn(column.getColumnId());
+        softly.assertThat(columnInfo.getColumnId()).isEqualTo(column.getColumnId());
         softly.assertThat(columnInfo.getName()).isEqualTo("할 일");
         softly.assertThat(columnInfo.getCards()).hasSize(3);
     }
@@ -81,13 +78,13 @@ class ColumnServiceTest {
     @Test
     @DisplayName("모든 칼럼을 가져온다.")
     public void getColumns() {
-        columnService.addCard(column.getId(), Card.of("Spring 공부", "토비의 스프링"));
-        columnService.addCard(column.getId(), Card.of("DB 공부", "데이터베이스 첫걸음"));
-        columnService.addCard(column.getId(), Card.of("AWS 공부", "호눅스 강의"));
+        columnService.addCard(column.getColumnId(), Card.of("Spring 공부", "토비의 스프링"));
+        columnService.addCard(column.getColumnId(), Card.of("DB 공부", "데이터베이스 첫걸음"));
+        columnService.addCard(column.getColumnId(), Card.of("AWS 공부", "호눅스 강의"));
 
-        Column doneColumn = columnService.addColumn("Done");
-        columnService.addCard(doneColumn.getId(), Card.of("잠자기", "침대에서 꿀잠"));
-        columnService.addCard(doneColumn.getId(), Card.of("노트북 설치", "리눅스 민트"));
+        ColumnInfo doneColumn = columnService.addColumn(new ColumnParameter("Done"));
+        columnService.addCard(doneColumn.getColumnId(), Card.of("잠자기", "침대에서 꿀잠"));
+        columnService.addCard(doneColumn.getColumnId(), Card.of("노트북 설치", "리눅스 민트"));
 
         List<ColumnInfo> columns = columnService.getColumns();
         softly.assertThat(columns).hasSize(5);
@@ -96,13 +93,13 @@ class ColumnServiceTest {
     @Test
     @DisplayName("칼럼에서 카드를 삭제한다.")
     public void removeCard() {
-        columnService.addCard(column.getId(), Card.of("Spring 공부", "토비의 스프링"));
-        CardInfo cardInfo = columnService.addCard(column.getId(), Card.of("DB 공부", "데이터베이스 첫걸음"));
-        columnService.addCard(column.getId(), Card.of("AWS 공부", "호눅스 강의"));
+        columnService.addCard(column.getColumnId(), Card.of("Spring 공부", "토비의 스프링"));
+        CardInfo cardInfo = columnService.addCard(column.getColumnId(), Card.of("DB 공부", "데이터베이스 첫걸음"));
+        columnService.addCard(column.getColumnId(), Card.of("AWS 공부", "호눅스 강의"));
 
-        columnService.removeCard(column.getId(), cardInfo.getCardId());
+        columnService.removeCard(column.getColumnId(), cardInfo.getCardId());
 
-        ColumnInfo columnInfo = columnService.getColumn(column.getId());
+        ColumnInfo columnInfo = columnService.getColumn(column.getColumnId());
         softly.assertThat(columnInfo.getCards()).hasSize(2);
     }
 

@@ -84,6 +84,10 @@ public class Column {
                 && (checkingCard != null && checkingCard.equalsCardId(cardId));
     }
 
+    public Column update(ColumnParameter newColumnInfo) {
+        return new Column(this.id, newColumnInfo.getName(), this.cards);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

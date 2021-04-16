@@ -14,6 +14,10 @@ public class ColumnInfo {
         this.cards = cards;
     }
 
+    public static ColumnInfo of(Column addedColumn, List<CardInfo> cards) {
+        return new ColumnInfo(addedColumn.getId(), addedColumn.getName(), cards);
+    }
+
     public Long getColumnId() {
         return columnId;
     }

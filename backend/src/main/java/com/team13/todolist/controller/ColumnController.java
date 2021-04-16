@@ -1,8 +1,8 @@
 package com.team13.todolist.controller;
 
 import com.team13.todolist.model.AddCardParameter;
+import com.team13.todolist.model.ColumnParameter;
 import com.team13.todolist.model.Card;
-import com.team13.todolist.model.CardInfo;
 import com.team13.todolist.model.UpdateCardParameter;
 import com.team13.todolist.service.ColumnService;
 import org.slf4j.Logger;
@@ -29,9 +29,28 @@ public class ColumnController {
         return ResponseEntity.ok(responseBody("columns", columnService.getColumns()));
     }
 
+    @PostMapping
+    public ResponseEntity<?> addColumn(@RequestBody ColumnParameter newColumn) {
+        return ResponseEntity.ok(responseBody("column", columnService.addColumn(newColumn)));
+    }
+
     @GetMapping("/{columnId}")
     public ResponseEntity<?> column(@PathVariable("columnId") Long columnId) {
         return ResponseEntity.ok(responseBody("column", columnService.getColumn(columnId)));
+    }
+
+    @PutMapping("/{columnId}")
+    public ResponseEntity<?> updateColumn(
+            @PathVariable("columnId") Long columnId,
+            @RequestBody ColumnParameter newColumnInfo
+    ) {
+        return ResponseEntity.ok(responseBody("column", columnService.updateColumn(columnId, newColumnInfo)));
+    }
+
+    @DeleteMapping("/{columnId}")
+    public ResponseEntity<?> removeColumn(@PathVariable("columnId") Long columnId) {
+        columnService.removeColumn(columnId);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{columnId}/cards")
@@ -54,7 +73,7 @@ public class ColumnController {
             @PathVariable("columnId") Long columnId,
             @PathVariable("cardId") Long cardId,
             @RequestBody UpdateCardParameter updateCardInfo
-            ) {
+    ) {
         return ResponseEntity.ok(responseBody("card", columnService.updateCard(columnId, cardId, updateCardInfo)));
     }
 
