@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import CardInput from "../../../../components/main/column/card/CardInput";
+import { TodoContext } from "../../../../lib/utility/TodoStore";
 
 const CardInputContainer = ({ title, body, index, setColumnData, columnId, cardId, previousCardId }) => {
+    const { setIsDataUpdate } = useContext(TodoContext);
     const [inputTitle, setTitle] = useState(title);
     const [inputBody, setBody] = useState(body);
     const isAble = inputTitle.length * inputBody.length;
@@ -15,25 +17,29 @@ const CardInputContainer = ({ title, body, index, setColumnData, columnId, cardI
 
         setColumnData((data)=>{
             const newData = [...data]
-            const left = newData[columnId-1].cards.slice(0, index);
-            const right = newData[columnId-1].cards.slice(index + 1);
-            newData[columnId-1].cards = left.concat(json.data.card, right);
+            const columnIndex = newData.findIndex((v)=>v.columnId===columnId)
+            const left = newData[columnIndex].cards.slice(0, index);
+            const right = newData[columnIndex].cards.slice(index + 1);
+            newData[columnIndex].cards = left.concat(json.data.card, right);
             return newData
         });
+        setIsDataUpdate(true);
     };
 
     const deleteCard = () => {
         title.length * body.length
             ? setColumnData((data)=>{
                 const newData = [...data]
-                const left = newData[columnId-1].cards.slice(0, index);
-                const right = newData[columnId-1].cards.slice(index + 1);
-                newData[columnId-1].cards = left.concat({ title, body, previousCardId, cardId, columnId }, right);
+                const columnIndex = newData.findIndex((v)=>v.columnId===columnId)
+                const left = newData[columnIndex].cards.slice(0, index);
+                const right = newData[columnIndex].cards.slice(index + 1);
+                newData[columnIndex].cards = left.concat({ title, body, previousCardId, cardId, columnId }, right);
                 return newData
             })
             : setColumnData((data)=>{
                 const newData = [...data]
-                newData[columnId-1].cards = newData[columnId-1].cards.filter((_, i) => i !== index)
+                const columnIndex = newData.findIndex((v)=>v.columnId===columnId)
+                newData[columnIndex].cards = newData[columnIndex].cards.filter((_, i) => i !== index)
                 return newData
             })
     };
