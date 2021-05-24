@@ -1,8 +1,6 @@
 # todo-list
 그룹프로젝트 #1
 
-[배포 주소](http://ec2-54-180-109-154.ap-northeast-2.compute.amazonaws.com:8080/)
-
 ## 팀 13 협업 규칙
 
 ### 이슈
